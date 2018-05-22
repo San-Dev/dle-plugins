@@ -18,5 +18,5 @@ https://sandev.pro/web/136-hak-avtomaticheskiy-vyvod-spiska-id-podkategoriy.html
 Данный хак добавляет кнопку, при клике на которую сразу становится отмеченной выбранная категория.
 
 ## Headers-Menu.xml
-Автоматическое создание содрежания для статьи из заголовкой H2-H6
+Автоматическое создание содрежания для статьи из заголовкой H2-H6.
 https://sandev.pro/web/129-avtomaticheskoe-sozdanie-soderzhaniya-stati-dlya-dle.html#comment-id-1213
