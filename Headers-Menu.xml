@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Автоматическое создание содержания статьи из тегов заголовков H2-H6</name>
+	<description></description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<file name="engine/mods/headers_menu.php">
+		<operation action="create">
+			<replacecode><![CDATA[<?php
+/**
+ * Автоматическое формирование содержания из тегов заголовков H2-H6 в тексте полной новости
+ *
+ * @author Sander <oleg.sandev@gmail.com>
+ * @link https://sandev.pro/
+ */
+
+class HeadersMenu
+{
+	/**
+	 * Шаблон строки в содержании. БЕЗ закрывающего тега li
+	 * %1$d - ID группы
+	 * %2$s - номер строки. Например: 2.2.3
+	 * %3$s - имя группы, тега H*
+	 * @var string
+	 */
+	private static $tpl_list = '<li id="hmenu-item-%1$d"><a href="#hmenu-%1$d"><span>%2$s</span> %3$s</a>';
+
+	/**
+	 * Шаблон формируемый для заголовка в теле статьи
+	 * %1$d - индекс тега h[1], h[2], h[3] ...
+	 * %2$d - ID группы
+	 * %3$s - имя группы
+	 * @var string
+	 */
+	private static $tpl_header = '<h%1$d id="hmenu-%2$d"><a href="#hmenu-item-%2$d" title="К меню">&uarr;</a> %3$s</h%1$d>';
+
+	/**
+	 * Временная переменная для формирования списка и иерархии
+	 * @var array
+	 */
+	private static $menu = [];
+
+	/**
+	 * Инициализация
+	 * @param  mixed &$story текст полной новости
+	 * @return mixed сформированный шаблон списка содержания
+	 */
+	public static function init(&$story = '')
+	{
+		if (empty($story)) {
+			return false;
+		}
+
+		preg_match_all("#<h(\d+)>(.*?)</h\\1>#is", $story, $hmenu);
+		if (count($hmenu[2]) < 2) {
+			return false;
+		}
+
+		self::$menu = [];
+		foreach ($hmenu[2] as $k => $v) {
+			$menu_id = $k + 1;
+			$v = strip_tags($v);
+			$v = trim($v);
+			$h_tag = intval($hmenu[1][$k]);
+
+			self::$menu[] = [
+				'id'  => $k+1,
+				'tag' => $h_tag,
+				'h'   => $v
+			];
+
+			$tag = preg_quote($hmenu[0][$k]);
+			$story = preg_replace(
+				"#{$tag}#",
+				sprintf(self::$tpl_header, $h_tag, $menu_id, $v),
+				$story,
+				1
+			);
+		}
+		return self::buildSubMenu(self::$menu[0]['tag']);
+	}
+
+	/**
+	 * Создание списка с рекурсией для подпунктов
+	 * @param  integer $prev   номер первого, корневого тега H[?]
+	 * @param  array   $number номер строки
+	 * @param  integer $sub    уровень вложенности
+	 * @return mixed сформированный шаблон
+	 */
+	private static function buildSubMenu($prev = 0, $number = [1], $sub = 0)
+	{
+		$list = '';
+		while (self::$menu) {
+			if (self::$menu[0]['tag'] == $prev) {
+				$v = array_shift(self::$menu);
+				$num = join('.', $number);
+				$list .= sprintf(self::$tpl_list, $v['id'], $num, $v['h']);
+
+				if (self::$menu[0]['tag'] > $v['tag'] ) {
+					$temp = $number;
+					array_push($number, 1);
+					$list .= self::buildSubMenu(self::$menu[0]['tag'], $number, $sub + 1);
+					$number = $temp;
+				}
+				$list .= '</li>';
+				$number[$sub]++;
+			} else {
+				break;
+			}
+		}
+		if ($sub) {
+			$list = '<ul>' . $list . '</ul>';
+		}
+		return $list;
+	}
+}
+
+if (isset($row['full_story']) && $tpl instanceof dle_template) {
+	$menulist = HeadersMenu::init($row['full_story']);
+	$tpl->set('{hmenu}', $menulist);
+	$tpl->set_block("#\[hmenu\](.*?)\[/hmenu\]#is", $menulist ? "\\1" : '');
+	$tpl->set_block("#\[not-hmenu\](.*?)\[/not-hmenu\]#is", $menulist ? '' : "\\1");
+}
+]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.full.php">
+		<operation action="after">
+			<searchcode><![CDATA[		$tpl->set( '{navigation}', "<!--dlenavigationcomments-->" );]]></searchcode>
+			<replacecode><![CDATA[///////////////////////////////////////////////////////////////////////
+		include_once (DLEPlugins::Check(ENGINE_DIR . '/mods/headers_menu.php'));
+///////////////////////////////////////////////////////////////////////]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
