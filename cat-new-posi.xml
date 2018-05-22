@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Правильное расположение новых категорий</name>
+	<description>Расположение новой добавленной категории в конец списка ветки. by Sander</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<file name="engine/inc/categories.php">
+		<operation action="after">
+			<searchcode><![CDATA['$disable_rating', '$disable_comments')" );]]></searchcode>
+			<replacecode><![CDATA[	$new_id = $db->insert_id();
+	$posi = $db->super_query("SELECT MAX(posi) as posi FROM ".PREFIX."_category WHERE parentid = $category LIMIT 1");
+	$posi = $posi['posi'] + 1;
+	$db->query("UPDATE ".PREFIX."_category SET posi = $posi WHERE id = $new_id");]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
