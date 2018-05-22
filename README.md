@@ -20,3 +20,7 @@ https://sandev.pro/web/136-hak-avtomaticheskiy-vyvod-spiska-id-podkategoriy.html
 ## Headers-Menu.xml
 Автоматическое создание содрежания для статьи из заголовкой `H2-H6`
 https://sandev.pro/web/129-avtomaticheskoe-sozdanie-soderzhaniya-stati-dlya-dle.html
+
+## breadcrumbs.xml
+Хлебные кроши в соответствии с schema.org
+https://sandev.pro/web/105-hlebnye-kroshki-speedbar.html
