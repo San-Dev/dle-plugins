@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Запоминать состояние категорий в админке</name>
+	<description>Запоминать состояние кнопок "Развернуть все" и "Свернуть все". by Sander</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<file name="engine/inc/categories.php">
+		<operation action="before">
+			<searchcode><![CDATA[		$('.nestable-action').on('click', function(e)]]></searchcode>
+			<replacecode><![CDATA[		if (localStorage.getItem('categoryExpand')) {
+			$('.dd').nestable('expandAll');
+		}]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[			if (action === 'expand-all') {
+]]></searchcode>
+			<replacecode><![CDATA[				localStorage.setItem('categoryExpand', true);]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[			if (action === 'collapse-all') {]]></searchcode>
+			<replacecode><![CDATA[				localStorage.removeItem('categoryExpand');]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
