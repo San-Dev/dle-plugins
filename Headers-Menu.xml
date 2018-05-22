@@ -139,4 +139,14 @@ if (isset($row['full_story']) && $tpl instanceof dle_template) {
 ///////////////////////////////////////////////////////////////////////]]></replacecode>
 		</operation>
 	</file>
+	<file name="engine/modules/static.php">
+		<operation action="before">
+			<searchcode><![CDATA[			$tpl->set( '{static}', $template );]]></searchcode>
+			<replacecode><![CDATA[///////////////////////////////////////////////////////////////////////
+			include_once (DLEPlugins::Check(ENGINE_DIR . '/mods/headers_menu.php'));
+			$menulist = HeadersMenu::init($template);
+			$template = $menulist . $template;
+///////////////////////////////////////////////////////////////////////]]></replacecode>
+		</operation>
+	</file>
 </dleplugin>
