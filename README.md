@@ -2,7 +2,7 @@
 Сборник плагинов для новой системы управления модулями/хаками в DLE 13.x
 
 ## auto-subcats.xml
-Хак позволяет использовать запись ```{subcat=3}``` для вывода списка подкатегорий в виде списка ```3,5,7,8,9```
+Хак позволяет использовать запись `{subcat=3}` для вывода списка подкатегорий в виде списка `3,5,7,8,9`
 https://sandev.pro/web/136-hak-avtomaticheskiy-vyvod-spiska-id-podkategoriy.html
 
 ## cat-expand.xml
@@ -18,5 +18,5 @@ https://sandev.pro/web/136-hak-avtomaticheskiy-vyvod-spiska-id-podkategoriy.html
 Данный хак добавляет кнопку, при клике на которую сразу становится отмеченной выбранная категория.
 
 ## Headers-Menu.xml
-Автоматическое создание содрежания для статьи из заголовкой H2-H6
-https://sandev.pro/web/129-avtomaticheskoe-sozdanie-soderzhaniya-stati-dlya-dle.html#comment-id-1213
+Автоматическое создание содрежания для статьи из заголовкой `H2-H6`
+https://sandev.pro/web/129-avtomaticheskoe-sozdanie-soderzhaniya-stati-dlya-dle.html
