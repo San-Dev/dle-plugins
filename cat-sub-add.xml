@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Автовыбор родительской категории</name>
+	<description>При создании подкатегории будет автомаитически выбрана родительская категория. by Sander</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<file name="engine/inc/categories.php">
+		<operation action="before">
+			<searchcode><![CDATA[<a href=\"?mod=categories&action=edit]]></searchcode>
+			<replacecode><![CDATA[<a href=\"#\" onclick=\"return addSubCat({$id});\"><i title=\"{$lang['cat_add']}\" class=\"fa fa-plus-circle text-success\"></i></a>  ]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[<script>]]></searchcode>
+			<replacecode><![CDATA[function addSubCat(id) {
+	$('.uniform[name=category]').val(id).selectpicker('render');
+	$('#newcats').modal();
+	return false;
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
