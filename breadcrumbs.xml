@@ -22,7 +22,7 @@
             'property="itemListElement" typeof="ListItem"',
         ),
         'a' => array(
-            'itemscope itemtype="http://schema.org/Thing" itemprop="item"',
+            'itemprop="item"',
             'property="item" typeof="WebPage"',
         ),
         'ul' => array(
