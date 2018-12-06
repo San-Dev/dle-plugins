@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
-	<name>Хлебные крошки</name>
+	<name>speedbar</name>
 	<description></description>
 	<icon></icon>
 	<version></version>
@@ -22,6 +22,7 @@
             'property="itemListElement" typeof="ListItem"',
         ),
         'a' => array(
+            //'itemscope itemtype="http://schema.org/Thing" itemprop="item"',
             'itemprop="item"',
             'property="item" typeof="WebPage"',
         ),
@@ -48,12 +49,20 @@
         if ($cat_info[$id]['parentid']) {
             getBreadcrumbListCategories( $cat_info[$id]['parentid'], true );
         }
-        $speedbar[] = array( $config['http_home_url'] . get_url( $id ) . '/', $cat_info[$id]['name'], $cat_info[$id]['metatitle'] );
+        $speedbar[] = [$config['http_home_url'] . get_url( $id ) . '/', $cat_info[$id]['name'], $cat_info[$id]['metatitle']];
     }
     $config['speedbar_separator'] = $config['speedbar_separator'] ? trim($config['speedbar_separator']) : "&raquo";
-    $speedbar = array( array( $config['http_home_url'], $config['short_title'], $config['home_title'] ) );
+    $speedbar = [[$config['http_home_url'], $config['short_title'], $config['home_title']]];
+  
+  	if ((int)$category_id === 6 && $dle_module === 'showfull') {
+        $category_id = $serialist->parent['category'];
+	}
+  
     if ($temp = intval($category_id)) {
-        getBreadcrumbListCategories( $temp );
+        getBreadcrumbListCategories($temp);
+		if ($serialist->parent['id']) {
+            $speedbar[] = [$config['http_home_url'] . $serialist->parent['link'] . '"', $serialist->parent['title']];
+		}
     } elseif ($do == 'tags') {
         $speedbar[] = array("/tags/", $lang['tag_cloud'] );
         $speedbar[] = array("/tags/" . urlencode($tag), $tag);
@@ -64,7 +73,6 @@
     if ($mod_speedbar) {
         $speedbar = array_merge($speedbar, $mod_speedbar);
     }
-
     if ($titl_e) {
         $speedbar[] = $titl_e;
     } elseif (isset($_GET['cstart']) && intval($_GET['cstart']) > 1) {
@@ -72,14 +80,18 @@
     }
 
     $tpl->result['speedbar'] = '';
-    $tpl->load_template( 'speedbar.tpl' );
+    $tpl->load_template ( 'speedbar.tpl' );
     $last_item = array_pop($speedbar);
     $speedbar[] = is_array($last_item) ? $last_item[1] : $last_item;
     foreach ($speedbar as $k => $v) {
-        $speedbar[$k] = "<li {$speedbar_prop['li'][$speedbar_rdfa]}>";
-        $title_s = "<span {$speedbar_prop['span'][$speedbar_rdfa]}>".(is_array($v) ? $v[1] : $v)."</span>";
-        $speedbar[$k] .= is_array($v) ? "<a {$speedbar_prop['a'][$speedbar_rdfa]} href=\"{$v[0]}\" title=\"".($v[2] ?: $v[1])."\">{$title_s}</a>" : $title_s;
-        $speedbar[$k] .= "<meta {$speedbar_prop['position'][$speedbar_rdfa]} content=\"".( $k+1 )."\" /></li>";
+    	if (is_array($v)) {
+			$speedbar[$k] = "<li {$speedbar_prop['li'][$speedbar_rdfa]}>";
+			$title_s = "<span {$speedbar_prop['span'][$speedbar_rdfa]}>".(is_array($v) ? $v[1] : $v)."</span>";
+			$speedbar[$k] .= "<a {$speedbar_prop['a'][$speedbar_rdfa]} href=\"{$v[0]}\" title=\"".($v[2] ?: $v[1])."\">{$title_s}</a>";
+			$speedbar[$k] .= "<meta {$speedbar_prop['position'][$speedbar_rdfa]} content=\"" . ($k+1) . "\" /></li>";	//$k + 1
+    	} else {
+    		$speedbar[$k] = "<li>$v</li>";
+    	}
     }
 
     $tpl->set( "{speedbar}", "<ul {$speedbar_prop['ul'][$speedbar_rdfa]} class=\"speedbar\">" . join("<li class=\"speedbar_sep\">{$config['speedbar_separator']}</li>", $speedbar) . "</ul>" );
