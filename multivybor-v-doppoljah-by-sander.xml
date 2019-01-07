@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Мультивыбор в доп.полях by Sander</name>
+	<description>Тип поля &quot;Список&quot;, название поля произвольное, описание должно начинаться с символа _
+Пример: &quot;_Мультивыбор&quot;</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<file name="engine/inc/xfields.php">
+		<operation action="before">
+			<searchcode><![CDATA[foreach (explode("\r\n", htmlspecialchars($value[4], ENT_QUOTES, $config['charset'] )) as $index1 => $value1) {]]></searchcode>
+			<replacecode><![CDATA[		if (mb_substr($value[1], 0, 1, $config['charset']) === '_') {
+			$fieldvalue = html_entity_decode($fieldvalue, ENT_QUOTES, $config['charset']);
+			$fieldvalue = explode(',', $fieldvalue);
+			$fieldvalue = array_map('trim', $fieldvalue);
+			$select = '';
+          $select = "<select class=\"uniform\" name=\"xfield[$fieldname][]\" multiple>";
+			$multiselect = true;
+		} else {
+			$multiselect = false;
+		}]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[		  if( count($value1) < 2) $value1[1] = $value1[0];]]></searchcode>
+			<replacecode><![CDATA[		  if ($multiselect) {
+            $select .= "<option value=\"$index1\"" . (in_array($value1[0], $fieldvalue) ? " selected" : "") . ">{$value1[1]}</option>\r\n";
+		  } else ]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[				$options = explode("|", $options[$_POST['xfield'][$value[0]]] );
+		        $postedxfields[$value[0]] = $options[0];]]></searchcode>
+			<replacecode><![CDATA[if (mb_substr($value[1], 0, 1, $config['charset']) === '_') {
+	$postedxfields[$value[0]] = [];
+	foreach ($_POST['xfield'][$value[0]] as $opk) {
+		if ($options[$opk]) {
+            $temp = explode('|', $options[$opk]);
+			$postedxfields[$value[0]][] = $temp[0];
+		}
+	}
+	$postedxfields[$value[0]] = join(', ', $postedxfields[$value[0]]);
+} else {
+				$options = explode("|", $options[$_POST['xfield'][$value[0]]] );
+		        $postedxfields[$value[0]] = $options[0];
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
