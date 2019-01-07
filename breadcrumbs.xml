@@ -56,9 +56,6 @@
 
 	if ($temp = intval($category_id)) {
 		getBreadcrumbListCategories($temp);
-		if ($serialist->parent['id']) {
-			$speedbar[] = [$config['http_home_url'] . $serialist->parent['link'] . '"', $serialist->parent['title']];
-		}
 	} elseif ($do == 'tags') {
 		$speedbar[] = array("/tags/", $lang['tag_cloud'] );
 		$speedbar[] = array("/tags/" . urlencode($tag), $tag);
