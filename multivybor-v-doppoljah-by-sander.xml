@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>Мультивыбор в доп.полях by Sander</name>
-	<description>Тип поля &quot;Список&quot;, название поля произвольное, описание должно начинаться с символа _
-Пример: &quot;_Мультивыбор&quot;</description>
+	<description>Дополняет тип поля &quot;Список&quot; добавляя возможность выбирать несколько значений из списка.</description>
 	<icon></icon>
-	<version></version>
+	<version>1.1</version>
 	<dleversion></dleversion>
 	<versioncompare>less</versioncompare>
 	<upgradeurl></upgradeurl>
@@ -17,13 +16,13 @@
 	<file name="engine/inc/xfields.php">
 		<operation action="before">
 			<searchcode><![CDATA[foreach (explode("\r\n", htmlspecialchars($value[4], ENT_QUOTES, $config['charset'] )) as $index1 => $value1) {]]></searchcode>
-			<replacecode><![CDATA[		if (mb_substr($value[1], 0, 1, $config['charset']) === '_') {
+			<replacecode><![CDATA[		if ($value[1][0] === '_') {
 			$fieldvalue = html_entity_decode($fieldvalue, ENT_QUOTES, $config['charset']);
 			$fieldvalue = explode(',', $fieldvalue);
 			$fieldvalue = array_map('trim', $fieldvalue);
-			$select = '';
-          $select = "<select class=\"uniform\" name=\"xfield[$fieldname][]\" multiple>";
+			$select = "<select class=\"uniform\" name=\"xfield[$fieldname][]\" multiple>";
 			$multiselect = true;
+			$value[1] = ltrim($value[1], '_');
 		} else {
 			$multiselect = false;
 		}]]></replacecode>
@@ -37,7 +36,7 @@
 		<operation action="replace">
 			<searchcode><![CDATA[				$options = explode("|", $options[$_POST['xfield'][$value[0]]] );
 		        $postedxfields[$value[0]] = $options[0];]]></searchcode>
-			<replacecode><![CDATA[if (mb_substr($value[1], 0, 1, $config['charset']) === '_') {
+			<replacecode><![CDATA[if ($value[1][0] === '_') {
 	$postedxfields[$value[0]] = [];
 	foreach ($_POST['xfield'][$value[0]] as $opk) {
 		if ($options[$opk]) {
@@ -50,6 +49,24 @@
 				$options = explode("|", $options[$_POST['xfield'][$value[0]]] );
 		        $postedxfields[$value[0]] = $options[0];
 }]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[		  $editedxfield[21] = clear_js($editedxfield[21]);]]></searchcode>
+			<replacecode><![CDATA[		  if (isset($editedxfield['multiselect'])) {
+		  	$editedxfield[1] = '_' . $editedxfield[1];
+		  	unset($editedxfield['multiselect']);
+		  }]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[    <?php echo $lang['xfield_title']; ?>]]></searchcode>
+			<replacecode><![CDATA[<?php
+$multiselect = $editedxfield[1][0] === '_';
+$editedxfield[1] = ltrim($editedxfield[1], '_');
+?>]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[<div class="text-muted text-size-small"><?php echo $lang['xfield_xfsel']; ?></div>]]></searchcode>
+			<replacecode><![CDATA[<div class="checkbox"><label><input  class="icheck" type="checkbox" name="editedxfield[multiselect]"<?= $multiselect ? 'checked' : '' ?> /> Использовать множественный выбор</label></div>]]></replacecode>
 		</operation>
 	</file>
 </dleplugin>
