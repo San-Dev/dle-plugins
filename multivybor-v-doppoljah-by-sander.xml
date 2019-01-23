@@ -3,7 +3,7 @@
 	<name>Мультивыбор в доп.полях by Sander</name>
 	<description>Дополняет тип поля &quot;Список&quot; добавляя возможность выбирать несколько значений из списка.</description>
 	<icon></icon>
-	<version>1.1</version>
+	<version>1.2</version>
 	<dleversion></dleversion>
 	<versioncompare>less</versioncompare>
 	<upgradeurl></upgradeurl>
@@ -38,6 +38,10 @@
 		        $postedxfields[$value[0]] = $options[0];]]></searchcode>
 			<replacecode><![CDATA[if ($value[1][0] === '_') {
 	$postedxfields[$value[0]] = [];
+	if (!is_array($_POST['xfield'][$value[0]])) {
+		$_POST['xfield'][$value[0]] = explode(',', $_POST['xfield'][$value[0]]);
+		$_POST['xfield'][$value[0]] = array_map('trim', $_POST['xfield'][$value[0]]);
+    }
 	foreach ($_POST['xfield'][$value[0]] as $opk) {
 		if ($options[$opk]) {
             $temp = explode('|', $options[$opk]);
@@ -67,6 +71,44 @@ $editedxfield[1] = ltrim($editedxfield[1], '_');
 		<operation action="before">
 			<searchcode><![CDATA[<div class="text-muted text-size-small"><?php echo $lang['xfield_xfsel']; ?></div>]]></searchcode>
 			<replacecode><![CDATA[<div class="checkbox"><label><input  class="icheck" type="checkbox" name="editedxfield[multiselect]"<?= $multiselect ? 'checked' : '' ?> /> Использовать множественный выбор</label></div>]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/ajax/editnews.php">
+		<operation action="replace">
+			<searchcode><![CDATA[			$fieldvalue = str_replace('&amp;', '&', $fieldvalue);
+
+			$xfbuffer .= "<div class=\"xfieldsrow\"><div class=\"xfieldscolleft\">{$value[1]}:</div><div class=\"xfieldscolright\"><select name=\"xfield[{$fieldname}]\" class=\"quick-edit-select\">";]]></searchcode>
+			<replacecode><![CDATA[			$fieldvalue = str_replace('&amp;', '&', $fieldvalue);
+
+			$multiselect = $value[1][0] === '_';
+			if ($multiselect) {
+				$value[1] = ltrim($value[1], '_');
+				$fieldvalue = explode(',', $fieldvalue);
+				$fieldvalue = array_map('trim', $fieldvalue);
+				$xfbuffer .= <<<HTML
+				<div class="xfieldsrow"><div class="xfieldscolleft">{$value[1]}:</div>
+				<div class="xfieldscolright">
+<script>
+function xfmultiselect(item, id) {
+	var list = [];
+	$(item).find('option:selected').each(function(i,v) {
+		list.push(v.value)
+	})
+	$('#xfmultiselect_' + id).val(list.join(', '));
+}
+</script>
+					<input type="hidden" id="xfmultiselect_{$fieldname}" name="xfield[{$fieldname}]" value="" />
+					<select class="quick-edit-select" multiple onchange="xfmultiselect(this, '{$fieldname}')">
+HTML;
+			} else {
+				$xfbuffer .= "<div class=\"xfieldsrow\"><div class=\"xfieldscolleft\">{$value[1]}:</div><div class=\"xfieldscolright\"><select name=\"xfield[{$fieldname}]\" class=\"quick-edit-select\">";
+			}]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[			  $xfbuffer .= "<option value=\"$index\"" . ($fieldvalue == $value[0] ? " selected" : "") . ">$value[1]</option>\r\n";]]></searchcode>
+			<replacecode><![CDATA[			  if ($multiselect) {
+			  	$xfbuffer .= "<option value=\"$index\"" . (in_array($value[0], $fieldvalue) ? " selected" : "") . ">{$value[1]}</option>\r\n";
+			  } else]]></replacecode>
 		</operation>
 	</file>
 </dleplugin>
