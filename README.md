@@ -34,3 +34,9 @@ https://sandev.pro/web/105-hlebnye-kroshki-speedbar.html
 Простенький плагин, который позволит в доп.поле тип "Список" выбирать несколько значений.
 
 https://sandev.pro/web/146-multivybor-v-doppolyah-dlya-dle-13.html
+
+## navigation-tag.xml
+Вывод навигации контента в шаблоне `main.tpl` отдельным тегом `{navigation}`
+
+https://sandev.pro/web/152-navigation.html
+
