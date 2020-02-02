@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Постраничная навигация отдельным тегом</name>
+	<description>Вывод навигации в файле шаблона main.tpl тегом {navigation}</description>
+	<icon></icon>
+	<version>1.0</version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/show.short.php">
+		<operation action="after">
+			<searchcode><![CDATA[			$tpl->compile( 'navi' );]]></searchcode>
+			<replacecode><![CDATA[			$tpl->result['navi'] = '<!--navigation_start_' . md5(DBNAME . DBUSER . $config['key']) . '-->' . $tpl->result['navi'] . '<!--navigation_end-->';]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/main.php">
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->set ( '{info}',  $tpl->result['info'] );]]></searchcode>
+			<replacecode><![CDATA[if (preg_match('#<!--navigation_start_' . md5(DBNAME . DBUSER . $config['key']) . '-->(.+?)<!--navigation_end-->#is', $tpl->result['content'], $navi)) {
+	$tpl->result['content'] = str_replace($navi[0], '', $tpl->result['content']);
+	$tpl->set('{navigation}', $navi[1]);
+	$tpl->set('[navigation]', '');
+	$tpl->set('[/navigation]', '');
+} else {
+	$tpl->set('{navigation}', '');
+	$tpl->copy_template = preg_replace('#\\[navigation\\](.*?)\\[/navigation\\]#is', '', $tpl->copy_template);
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
