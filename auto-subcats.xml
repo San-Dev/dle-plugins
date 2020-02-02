@@ -1,49 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
-    <name>Обработка тега {subcat=x}</name>
-    <description>Автоматический вывод списка ID подкатегорий заданной &quot;x&quot; категории</description>
-    <icon></icon>
-    <version></version>
-    <dleversion></dleversion>
-    <versioncompare>less</versioncompare>
-    <mysqlinstall><![CDATA[]]></mysqlinstall>
-    <mysqlupgrade><![CDATA[]]></mysqlupgrade>
-    <mysqlenable><![CDATA[]]></mysqlenable>
-    <mysqldisable><![CDATA[]]></mysqldisable>
-    <mysqldelete><![CDATA[]]></mysqldelete>
-    <file name="engine/classes/templates.class.php">
-        <operation action="before">
-            <searchcode><![CDATA[function load_template($tpl_name) {]]></searchcode>
-            <replacecode><![CDATA[//////////////////////////////////////////////////////////////
-    private function getSubCatList($match)
-    {
-        global $cat_info;
-        $id = is_array($match) ? $match[1] : $match;
-
-        if (!$cat_info[$id]) {
-            return $id;
-        }
-        $list = [$id];
-        foreach ($cat_info as $v) {
-            if ($v['parentid'] == $id) {
-                $list[] = $this->getSubCatList($v['id']);
-            }
-        }
-        return join(',', $list);
-    }
-//////////////////////////////////////////////////////////////]]></replacecode>
-        </operation>
-        <operation action="after">
-            <searchcode><![CDATA[$this->template = file_get_contents( $this->dir . "/" . $tpl_name );]]></searchcode>
-            <replacecode><![CDATA[//////////////////////////////////////////////////////////////////////////////////////////////
-        $this->template = preg_replace_callback("#\{subcat=(\d+)\}#i", [&$this, 'getSubCatList'], $this->template);
-//////////////////////////////////////////////////////////////////////////////////////////////]]></replacecode>
-        </operation>
-        <operation action="after">
-            <searchcode><![CDATA[$template = file_get_contents( $templatefile );]]></searchcode>
-            <replacecode><![CDATA[//////////////////////////////////////////////////////////////////////////////////////////////
-        $template = preg_replace_callback("#\{subcat=(\d+)\}#i", [&$this, 'getSubCatList'], $template);
-//////////////////////////////////////////////////////////////////////////////////////////////]]></replacecode>
-        </operation>
-    </file>
+	<name>Постраничная навигация отдельным тегом</name>
+	<description>Вывод навигации в файле шаблона main.tpl тегом {navigation}</description>
+	<icon></icon>
+	<version>1.0</version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/show.short.php">
+		<operation action="after">
+			<searchcode><![CDATA[			$tpl->compile( 'navi' );]]></searchcode>
+			<replacecode><![CDATA[			$tpl->result['navi'] = '<!--navigation_start_' . md5(DBNAME . DBUSER . $config['key']) . '-->' . $tpl->result['navi'] . '<!--navigation_end-->';]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/main.php">
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->set ( '{info}',  $tpl->result['info'] );]]></searchcode>
+			<replacecode><![CDATA[if (preg_match('#<!--navigation_start_' . md5(DBNAME . DBUSER . $config['key']) . '-->(.+?)<!--navigation_end-->#is', $tpl->result['content'], $navi)) {
+	if (stripos($tpl->copy_template, '{navigation}') !== false) {
+		$tpl->result['content'] = str_replace($navi[0], '', $tpl->result['content']);
+	} else {
+		$tpl->result['content'] = str_replace($navi[0], $navi[1], $tpl->result['content']);
+	}
+	$tpl->set('{navigation}', $navi[1]);
+	$tpl->set('[navigation]', '');
+	$tpl->set('[/navigation]', '');
+} else {
+	$tpl->set('{navigation}', '');
+	$tpl->copy_template = preg_replace('#\\[navigation\\](.*?)\\[/navigation\\]#is', '', $tpl->copy_template);
+}]]></replacecode>
+		</operation>
+	</file>
 </dleplugin>
