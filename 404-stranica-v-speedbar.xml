@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>404 страница в speedbar</name>
+	<description>При не существующей категории или новости спидбар показывает &quot;Страница не найдена&quot;</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/engine.php">
+		<operation action="before">
+			<searchcode><![CDATA[	$tpl->load_template ( 'speedbar.tpl' );]]></searchcode>
+			<replacecode><![CDATA[	if (($dle_module == 'cat' && !intval($category_id))
+    || ($dle_module == 'static' && !$static_result['id'])
+		|| ($dle_module == 'showfull' && !$news_found)
+	) {
+		$s_navigation .= " {$config['speedbar_separator']} Страница не найдена";
+	}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
