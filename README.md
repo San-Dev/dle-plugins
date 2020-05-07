@@ -42,3 +42,8 @@ https://sandev.pro/web/152-navigation.html
 
 ## 404-stranica-v-speedbar.xml
 При переходе на страницу не существующей категории, новости или статической страницы - в спидбаре это никак не учитывается и не отображается. Данный плагин добавлят в спидбар для таких страниц - "Страница не найдена"
+
+## custom-category-current.xml
+Автоматическая подстановка ID просматриваемой категории. Поддерживаются значения "current" и "current_sub".
+
+https://sandev.pro/web/48-rasshirenie-funkcionala-tega-123custom.html
