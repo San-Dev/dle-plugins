@@ -45,5 +45,6 @@ https://sandev.pro/web/152-navigation.html
 
 ## custom-category-current.xml
 Автоматическая подстановка ID просматриваемой категории. Поддерживаются значения "current" и "current_sub".
+Пример `[aviable=cat|showfull]{custom category="current" limit="10"}[/aviable]`
 
 https://sandev.pro/web/48-rasshirenie-funkcionala-tega-123custom.html
