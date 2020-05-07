@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>custom category=&quot;current&quot; by Sander</name>
+	<description>Автоматическая подстановка ID просматриваемой категории. Поддерживаются значения &quot;current&quot; и &quot;current_sub&quot;</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/modules/functions.php">
+		<operation action="after">
+			<searchcode><![CDATA[	if( preg_match( "#category=['\"](.+?)['\"]#i", $param_str, $match ) ) {]]></searchcode>
+			<replacecode><![CDATA[		//Автоматически установить текущий ID категории
+		if (in_array($match[1], ['current', 'current_sub'])) {
+			if ($sandev_category = (int)$category_id) {
+				$match[1] == 'current_sub' && $sandev_category = strtr(get_sub_cats($sandev_category), ['|' => ',']);
+				$match[1] = $sandev_category;
+				$param_str = str_replace($match[0], "category=\"{$match[1]}\"", $param_str);
+			}
+		}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
