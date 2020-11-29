@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Category-count SQL optimize by Sander</name>
+	<description>Кеширование счетчика количества новостей для построения постраничной навигации</description>
+	<icon></icon>
+	<version>1.0</version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/modules/show.short.php">
+		<operation action="before">
+			<searchcode><![CDATA[		$count_all = $db->super_query( $sql_count );]]></searchcode>
+			<replacecode><![CDATA[		$count_cache_path = ENGINE_DIR . '/cache/news_select-count.tmp';
+		if (file_exists($count_cache_path)) {
+			$temp = file_get_contents($count_cache_path);
+			$count_cache = $temp ? json_decode($temp, true) : [];
+		} else {
+			$count_cache = [];
+		}
+		$cache_hash = md5($sql_count);
+		if (!is_null($count_cache[$cache_hash])) {
+			$count_all = ['count' => $count_cache[$cache_hash]];
+		} else ]]></replacecode>
+			<searchcount>1</searchcount>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[		$count_all = $count_all['count'];]]></searchcode>
+			<replacecode><![CDATA[		if (is_null($count_cache[$cache_hash])) {
+			$count_cache[$cache_hash] = (int)$count_all;
+			file_put_contents($count_cache_path, json_encode($count_cache));
+		}
+		unset($count_cache);]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
