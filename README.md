@@ -48,3 +48,8 @@ https://sandev.pro/web/152-navigation.html
 Пример `[aviable=cat|showfull]{custom category="current" limit="10"}[/aviable]`
 
 https://sandev.pro/web/48-rasshirenie-funkcionala-tega-123custom.html
+
+## cat-optim.xml
+Оптимизация SQL запросов `SELECT count(*)` для построение постраничной навигации
+
+https://sandev.pro/web/141-optimizaciya-dle.html
