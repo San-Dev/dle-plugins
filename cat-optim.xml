@@ -29,19 +29,19 @@ https://sandev.pro/web/141-optimizaciya-dle.html</description>
 		if (file_exists($count_cache_path)) {
 			$temp = file_get_contents($count_cache_path);
 			$count_cache = $temp ? json_decode($temp, true) : [];
+			unset($temp);
 		} else {
 			$count_cache = [];
 		}
 		$cache_hash = md5($sql_count);
 		if (!is_null($count_cache[$cache_hash])) {
-			$count_all = ['count' => $count_cache[$cache_hash]];
-		} else ]]></replacecode>
+			$count_all = (int)$count_cache[$cache_hash];
+		} else {]]></replacecode>
 			<searchcount>1</searchcount>
 		</operation>
 		<operation action="after">
 			<searchcode><![CDATA[		$count_all = $count_all['count'];]]></searchcode>
-			<replacecode><![CDATA[		if (is_null($count_cache[$cache_hash])) {
-			$count_cache[$cache_hash] = (int)$count_all;
+			<replacecode><![CDATA[			$count_cache[$cache_hash] = (int)$count_all;
 			file_put_contents($count_cache_path, json_encode($count_cache));
 		}
 		unset($count_cache);]]></replacecode>
