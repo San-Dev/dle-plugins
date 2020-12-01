@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>Category-count SQL optimize by Sander</name>
-	<description>Кеширование счетчика количества новостей для построения постраничной навигации</description>
+	<description>Кеширование счетчика количества новостей для построения постраничной навигации
+https://sandev.pro/web/141-optimizaciya-dle.html</description>
 	<icon></icon>
 	<version>1.0</version>
 	<dleversion></dleversion>
