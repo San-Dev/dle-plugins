@@ -53,3 +53,8 @@ https://sandev.pro/web/48-rasshirenie-funkcionala-tega-123custom.html
 Оптимизация SQL запросов `SELECT count(*)` для построение постраничной навигации
 
 https://sandev.pro/web/141-optimizaciya-dle.html
+
+## fullstory-metatags.xml
+Автоматическое формирование метатегов и тегов OpenGraph на странице полной новости
+
+https://sandev.pro/web/159-fullstory-metatags-by-sander.html
