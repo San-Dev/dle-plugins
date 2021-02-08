@@ -71,7 +71,7 @@ if (preg_match('#\\[(metatags)\\](.+?)\\[/\\1\\]#is', $tpl->result['content'], $
         	if ($v == 'robots' && in_array($val, ['0','no','off','false'])) {
           		$disable_index = true;
 				unset($metatags[$v]);
-            }
+			}
 		}
 	}
 	$tpl->result['content'] = str_replace($simple_meta[0], '', $tpl->result['content']);
