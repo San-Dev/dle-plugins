@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Fullstory-Metatags by Sander</name>
+	<description>Управление метатегами полной новости
+@author Sander &lt;oleg.sandev@gmail.com&gt;
+@link https://sandev.pro/</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[В fullstory.tpl использовать запись вида:
+[metatags]
+<title></title>
+<description></description>
+<keywords></keywords>
+<og:title></og:title>
+<og:любой-тег></og:любой-тег>
+<robots>noindex,follow</robots>
+[/metatags]
+
+Примечание по <robots>
+Полноценная работа тега robots поддерживается только начиная с DLE 13.3
+Для более ранних версий можно только заблокировать доступ ботам, для этого достаточно прописать любое из значений: false, no, off, 0
+Если в настройках новости включено блокирование, то любое значение модуля будет проигнорировано.]]></notice>
+	<file name="engine/modules/show.full.php">
+		<operation action="before">
+			<searchcode><![CDATA[if( $allow_comments AND $news_found) {]]></searchcode>
+			<replacecode><![CDATA[////////////////////////////////////////////////////////////////////////////////////////////////
+		include_once (DLEPlugins::Check(ENGINE_DIR . '/mods/fullstory.metatags.php'));
+////////////////////////////////////////////////////////////////////////////////////////////////]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/mods/fullstory.metatags.php">
+		<operation action="create">
+			<replacecode><![CDATA[<?php
+/**
+ * Управление метатегами и разметкой OpenGraph на странице полной новости
+ * @author Sandev <oleg.sandev@gmail.com>
+ * @link https://sandev.pro/
+ */
+
+defined('DATALIFEENGINE') || die('Nope');
+if (!$news_found) return;
+  
+if (preg_match('#\\[(metatags)\\](.+?)\\[/\\1\\]#is', $tpl->result['content'], $simple_meta)) {
+	preg_match_all('#<(.+?)>(.*?)</\\1>#is', $simple_meta[2], $simple_tags);
+	foreach ($simple_tags[1] as $k => $v) {
+		$val = preg_replace('#\s+#is', ' ', $simple_tags[2][$k]);
+		$val = strip_tags($val);
+		$val = trim($val);
+		if (stripos($v, 'og:') === 0) {
+			$v = substr($v, 3);
+			$social_tags[$v] = $val;
+		} elseif ($v != 'title' || !$metatags['header_title']) {
+			$v == 'title' && $v = 'header_title';
+			$metatags[$v] = $val;
+        	if ($v == 'robots' && in_array($val, ['0','no','off','false'])) {
+          		$disable_index = true;
+				unset($metatags[$v]);
+            }
+		}
+	}
+	$tpl->result['content'] = str_replace($simple_meta[0], '', $tpl->result['content']);
+	$tpl->result['content'] = trim($tpl->result['content']);
+}
+]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
