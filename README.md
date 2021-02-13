@@ -58,3 +58,8 @@ https://sandev.pro/web/141-optimizaciya-dle.html
 Автоматическое формирование метатегов и тегов OpenGraph на странице полной новости
 
 https://sandev.pro/web/159-fullstory-metatags-by-sander.html
+
+## include-optim.xml
+Оптимизация подключаемых `{include file="php"}` файлов
+
+https://sandev.pro/web/141-optimizaciya-dle.html
