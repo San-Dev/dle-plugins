@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Оптимизация шаблоназитора by Sander</name>
+	<description>Для {include file=&quot;...php&quot;} файлов</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>less</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/classes/templates.class.php">
+		<operation action="replace">
+			<searchcode><![CDATA[			$tpl = new dle_template();
+			$tpl->dir = TEMPLATE_DIR;]]></searchcode>
+			<replacecode><![CDATA[			$tpl = clone $this;
+			$tpl->template = $tpl->copy_template = '';
+			$tpl->block_data = $tpl->data = $tpl->result = [];]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
