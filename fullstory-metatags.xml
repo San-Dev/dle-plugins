@@ -68,8 +68,8 @@ if (preg_match('#\\[(metatags)\\](.+?)\\[/\\1\\]#is', $tpl->result['content'], $
 		} elseif ($v != 'title' || !$metatags['header_title']) {
 			$v == 'title' && $v = 'header_title';
 			$metatags[$v] = $val;
-        	if ($v == 'robots' && in_array($val, ['0','no','off','false'])) {
-          		$disable_index = true;
+        		if ($v == 'robots' && in_array($val, ['0','no','off','false'])) {
+          			$disable_index = true;
 				unset($metatags[$v]);
 			}
 		}
