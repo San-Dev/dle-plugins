@@ -4,7 +4,7 @@
 	<description>Кеширование счетчика количества новостей для построения постраничной навигации
 https://sandev.pro/web/141-optimizaciya-dle.html</description>
 	<icon></icon>
-	<version>1.1</version>
+	<version>2.0</version>
 	<dleversion></dleversion>
 	<versioncompare>less</versioncompare>
 	<upgradeurl></upgradeurl>
@@ -22,26 +22,35 @@ https://sandev.pro/web/141-optimizaciya-dle.html</description>
 	<phpdisable><![CDATA[]]></phpdisable>
 	<phpdelete><![CDATA[]]></phpdelete>
 	<notice><![CDATA[]]></notice>
-	<file name="engine/modules/show.short.php">
+	<file name="engine/modules/functions.php">
 		<operation action="before">
-			<searchcode><![CDATA[		$count_all = $db->super_query( $sql_count );]]></searchcode>
-			<replacecode><![CDATA[		$sql_count_cache = dle_cache('news_select-count');
-		if ($sql_count_cache !== false) {
-			$count_cache = json_decode($sql_count_cache, true);
-		} else {
-			$count_cache = [];
-		}
-		$cache_hash = md5($sql_count);
-		if (!is_null($count_cache[$cache_hash])) {
-			$count_all = (int)$count_cache[$cache_hash];
-		} else {]]></replacecode>
-			<searchcount>1</searchcount>
+			<searchcode><![CDATA[function dle_cache(]]></searchcode>
+			<replacecode><![CDATA[function getPostSqlCount($sql_count)
+{
+	global $db;
+	$cache_hash = md5($sql_count);
+	$count_all = [
+		'count' => (int)dle_cache('news_sqlCount', $cache_hash),
+	];
+
+	if (!$count_all['count']) {
+		$count_all = $db->super_query( $sql_count );
+		create_cache('news_sqlCount', (int)$count_all['count'], $cache_hash);
+    }
+	return $count_all;
+}]]></replacecode>
 		</operation>
-		<operation action="after">
-			<searchcode><![CDATA[		$count_all = $count_all['count'];]]></searchcode>
-			<replacecode><![CDATA[			$count_cache[$cache_hash] = (int)$count_all;
-			create_cache('news_select-count', json_encode($count_cache));
-		}]]></replacecode>
+	</file>
+	<file name="engine/modules/show.short.php">
+		<operation action="replace">
+			<searchcode><![CDATA[$count_all = $db->super_query( $sql_count );]]></searchcode>
+			<replacecode><![CDATA[$count_all = getPostSqlCount( $sql_count );]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.custom.php">
+		<operation action="replace">
+			<searchcode><![CDATA[$count_all = $db->super_query( $sql_count );]]></searchcode>
+			<replacecode><![CDATA[$count_all = getPostSqlCount( $sql_count );]]></replacecode>
 		</operation>
 	</file>
 </dleplugin>
