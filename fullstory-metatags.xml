@@ -38,7 +38,7 @@
 Если в настройках новости включено блокирование, то любое значение модуля будет проигнорировано.]]></notice>
 	<file name="engine/modules/show.full.php">
 		<operation action="before">
-			<searchcode><![CDATA[if( $allow_comments AND $news_found) {]]></searchcode>
+			<searchcode><![CDATA[if (stripos ( $tpl->result['content'], "[hide" ) !== false ) {]]></searchcode>
 			<replacecode><![CDATA[////////////////////////////////////////////////////////////////////////////////////////////////
 		include_once (DLEPlugins::Check(ENGINE_DIR . '/mods/fullstory.metatags.php'));
 ////////////////////////////////////////////////////////////////////////////////////////////////]]></replacecode>
