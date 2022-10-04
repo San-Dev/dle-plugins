@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Mobile_Detect [DISABLER]</name>
+	<description>Отключение функционала определения устройства пользователя в целях оптимизации шаблонизатора</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>==</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/classes/templates.class.php">
+		<operation action="replace">
+			<searchcode><![CDATA[	public $desktop = true;
+	public $smartphone = false;
+	public $tablet = false;
+	public $android = false;]]></searchcode>
+			<enabled>1</enabled>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[		$mobile_detect = new Mobile_Detect;
+
+		if ( $mobile_detect->isMobile() ) {
+			$this->smartphone = true;
+			$this->desktop = false;
+		}
+
+		if ( $mobile_detect->isTablet() ) {
+			$this->smartphone = false;
+			$this->desktop = false;
+			$this->tablet = true;
+		}
+		
+		if( $mobile_detect->isiOS() ){
+			$this->ios = true;
+		}
+
+		if( $mobile_detect->isAndroidOS() ){
+			$this->android = true;
+		}]]></searchcode>
+			<enabled>1</enabled>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[		if (stripos ( $this->template, "[smartphone]" ) !== false) {
+			$this->template = preg_replace_callback ( "#\\[(smartphone)\\](.*?)\\[/smartphone\\]#is", array( &$this, 'check_device'), $this->template );
+		}
+
+		if (stripos ( $this->template, "[not-smartphone]" ) !== false) {
+			$this->template = preg_replace_callback ( "#\\[(not-smartphone)\\](.*?)\\[/not-smartphone\\]#is", array( &$this, 'check_device'), $this->template );
+		}
+
+		if (stripos ( $this->template, "[tablet]" ) !== false) {
+			$this->template = preg_replace_callback ( "#\\[(tablet)\\](.*?)\\[/tablet\\]#is", array( &$this, 'check_device'), $this->template );
+		}
+
+		if (stripos ( $this->template, "[not-tablet]" ) !== false) {
+			$this->template = preg_replace_callback ( "#\\[(not-tablet)\\](.*?)\\[/not-tablet\\]#is", array( &$this, 'check_device'), $this->template );
+		}
+
+		if (stripos ( $this->template, "[desktop]" ) !== false) {
+			$this->template = preg_replace_callback ( "#\\[(desktop)\\](.*?)\\[/desktop\\]#is", array( &$this, 'check_device'), $this->template );
+		}
+
+		if (stripos ( $this->template, "[not-desktop]" ) !== false) {
+			$this->template = preg_replace_callback ( "#\\[(not-desktop)\\](.*?)\\[/not-desktop\\]#is", array( &$this, 'check_device'), $this->template );
+		}
+		
+		if (stripos ( $this->template, "android]" ) !== false) {
+			
+			if($this->android) {
+				
+				$this->template = str_ireplace( '[android]', "", $this->template );
+				$this->template = str_ireplace( '[/android]', "", $this->template );
+				$this->template = preg_replace( "#\[not-android\](.+?)\[/not-android\]#is", "", $this->template );
+				
+			} else {
+				
+				$this->template = str_ireplace( '[not-android]', "", $this->template );
+				$this->template = str_ireplace( '[/not-android]', "", $this->template );
+				$this->template = preg_replace( "#\[android\](.+?)\[/android\]#is", "", $this->template );
+				
+			}
+			
+		}
+		
+		if (stripos ( $this->template, "ios]" ) !== false ) {
+			
+			if($this->ios) {
+				
+				$this->template = str_ireplace( '[ios]', "", $this->template );
+				$this->template = str_ireplace( '[/ios]', "", $this->template );
+				$this->template = preg_replace( "#\[not-ios\](.+?)\[/not-ios\]#is", "", $this->template );
+				
+			} else {
+				
+				$this->template = str_ireplace( '[not-ios]', "", $this->template );
+				$this->template = str_ireplace( '[/not-ios]', "", $this->template );
+				$this->template = preg_replace( "#\[ios\](.+?)\[/ios\]#is", "", $this->template );
+				
+			}
+			
+		}]]></searchcode>
+			<enabled>1</enabled>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[		if (stripos ( $template, "[smartphone]" ) !== false) {
+			$template = preg_replace_callback ( "#\\[(smartphone)\\](.*?)\\[/smartphone\\]#is", array( &$this, 'check_device'), $template );
+		}
+
+		if (stripos ( $template, "[not-smartphone]" ) !== false) {
+			$template = preg_replace_callback ( "#\\[(not-smartphone)\\](.*?)\\[/not-smartphone\\]#is", array( &$this, 'check_device'), $template );
+		}
+
+		if (stripos ( $template, "[tablet]" ) !== false) {
+			$template = preg_replace_callback ( "#\\[(tablet)\\](.*?)\\[/tablet\\]#is", array( &$this, 'check_device'), $template );
+		}
+
+		if (stripos ( $template, "[not-tablet]" ) !== false) {
+			$template = preg_replace_callback ( "#\\[(not-tablet)\\](.*?)\\[/not-tablet\\]#is", array( &$this, 'check_device'), $template );
+		}
+
+		if (stripos ( $template, "[desktop]" ) !== false) {
+			$template = preg_replace_callback ( "#\\[(desktop)\\](.*?)\\[/desktop\\]#is", array( &$this, 'check_device'), $template );
+		}
+
+		if (stripos ( $template, "[not-desktop]" ) !== false) {
+			$template = preg_replace_callback ( "#\\[(not-desktop)\\](.*?)\\[/not-desktop\\]#is", array( &$this, 'check_device'), $template );
+		}
+		
+		if (stripos ( $template, "android]" ) !== false) {
+			
+			if($this->android) {
+				
+				$template = str_ireplace( '[android]', "", $template );
+				$template = str_ireplace( '[/android]', "", $template );
+				$template = preg_replace( "#\[not-android\](.+?)\[/not-android\]#is", "", $template );
+				
+			} else {
+				
+				$template = str_ireplace( '[not-android]', "", $template );
+				$template = str_ireplace( '[/not-android]', "", $template );
+				$template = preg_replace( "#\[android\](.+?)\[/android\]#is", "", $template );
+				
+			}
+			
+		}
+		
+		if (stripos ( $template, "ios]" ) !== false) {
+			
+			if($this->ios) {
+				
+				$template = str_ireplace( '[ios]', "", $template );
+				$template = str_ireplace( '[/ios]', "", $template );
+				$template = preg_replace( "#\[not-ios\](.+?)\[/not-ios\]#is", "", $template );
+				
+			} else {
+				
+				$template = str_ireplace( '[not-ios]', "", $template );
+				$template = str_ireplace( '[/not-ios]', "", $template );
+				$template = preg_replace( "#\[ios\](.+?)\[/ios\]#is", "", $template );
+				
+			}
+			
+		}]]></searchcode>
+			<enabled>1</enabled>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[	function check_device( $matches=array() ) {
+
+		$block = $matches[2];
+		$device = $this->desktop;
+
+		if ($matches[1] == "smartphone" OR $matches[1] == "tablet" OR $matches[1] == "desktop") $action = true; else $action = false;
+		if ($matches[1] == "smartphone" OR $matches[1] == "not-smartphone") $device = $this->smartphone;
+		if ($matches[1] == "tablet" OR $matches[1] == "not-tablet") $device = $this->tablet;
+
+		if( $action ) {
+			
+			if( !$device ) return "";
+		
+		} else {
+			
+			if( $device ) return "";
+		
+		}
+
+		return $block;
+	}]]></searchcode>
+			<enabled>1</enabled>
+		</operation>
+	</file>
+</dleplugin>
