@@ -63,3 +63,6 @@ https://sandev.pro/web/159-fullstory-metatags-by-sander.html
 Оптимизация подключаемых `{include file="php"}` файлов
 
 https://sandev.pro/web/141-optimizaciya-dle.html
+
+## lostpassword-by-ip.xml
+Функция сброса пароля (при переходе по ссылке с почты) доступна только тому же IP с которого совершался запрос на восстановление.
