@@ -25,7 +25,7 @@
 	<file name="engine/inc/options.php">
 		<operation action="before">
 			<searchcode><![CDATA[<!-- Toolbar -->]]></searchcode>
-			<replacecode><![CDATA[<div class="navbar navbar-default" style="padding: 10px 20px"><input type="text" id="settings_search" class="form-control width-400" placeholder="Поиск по настройкам"></div>
+			<replacecode><![CDATA[<div class="navbar navbar-default" style="padding: 10px 20px;margin-bottom: 20px;"><input type="text" id="settings_search" class="form-control width-400" placeholder="Поиск по настройкам"></div>
 <style>
 .panel--visible {display: block!important}
 .panel--hidden {display: none!important}
@@ -41,8 +41,7 @@ $(document).on('keyup', '#settings_search', function(e){
 	$('table.table tr').each(function(i,v){
 		var html = v.innerText + $(v).find('input, textarea, select').attr('name');
 		if (html.toLowerCase().indexOf(search) >= 0) {
-			$(v).show();
-			$(v).closest('.panel').addClass('panel--visible').removeClass('panel--hidden');
+			$(v).show().closest('.panel').addClass('panel--visible').removeClass('panel--hidden');
 		}
 	});
 });
