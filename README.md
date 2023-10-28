@@ -69,3 +69,6 @@ https://sandev.pro/web/141-optimizaciya-dle.html
 
 ## settings-fast-search.xml
 Простой и быстрый поиск по всем вкладкам настроек DLE
+
+## custom-pustoj-shablon.xml
+Шаблон отображаемый блоке custom, если в нем не отображаются новости. Например блок недавно просмотренных `order="lastviewed"`
