@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>[available=404] если на странице нет контента</name>
+	<description>$do = $dle_module = 404;</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>==</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>1</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[По умолчанию все не существующие страницы воспринимаются движком как категории.
+Соответственно ломается логика разделов [available=cat] ... [/available]
+Данный плагин меняет тип страницы с `cat` на `404`]]></notice>
+	<file name="engine/init.php">
+		<operation action="after">
+			<searchcode><![CDATA[else $category_id = false;]]></searchcode>
+			<replacecode><![CDATA[$do == 'cat' && !$category_id && $do = $dle_module = '404';]]></replacecode>
+			<enabled>1</enabled>
+		</operation>
+	</file>
+</dleplugin>
