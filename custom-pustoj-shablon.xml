@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>custom – пустой шаблон</name>
+	<description>Отображение шаблона по умолчанию, если custom пустой
+{custom ... empty=&quot;empty_tpl&quot;}
+где empty_tpl - файл `empty_tpl.tpl` из папки с шаблоном</description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>==</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/modules/functions.php">
+		<operation action="before">
+			<searchcode><![CDATA[if( preg_match( "#order=['\"](.+?)['\"]#i", $param_str, $match ) ) {]]></searchcode>
+			<replacecode><![CDATA[	if (preg_match('#empty=["\'](.+?)["\']#i', $param_str, $match)) {
+		$tpl_path = TEMPLATE_DIR . '/' . str_replace('..', '', $match[1]) . '.tpl';
+		$empty_tpl = file_exists($tpl_path) ? file_get_contents($tpl_path) : '';
+	} else {
+		$empty_tpl = '';
+	}]]></replacecode>
+			<enabled>1</enabled>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[if( !$_COOKIE['viewed_ids'] ) return '';]]></searchcode>
+			<replacecode><![CDATA[if( !$_COOKIE['viewed_ids'] ) return $empty_tpl;]]></replacecode>
+			<enabled>1</enabled>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[include (DLEPlugins::Check(ENGINE_DIR . '/modules/show.custom.php'));]]></searchcode>
+			<replacecode><![CDATA[if (!$tpl->result['content']) return $empty_tpl;]]></replacecode>
+			<enabled>1</enabled>
+		</operation>
+	</file>
+</dleplugin>
