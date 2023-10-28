@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Улучшение поиска новостей в админке</name>
+	<description></description>
+	<icon></icon>
+	<version></version>
+	<dleversion></dleversion>
+	<versioncompare>==</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/inc/editnews.php">
+		<operation action="replace">
+			<searchcode><![CDATA[		if(!$_REQUEST['search_area']) {
+			$where[] = "(title like '%{$search_field}%' OR short_story like '%{$search_field}%' OR full_story like '%{$search_field}%' OR xfields like '%{$search_field}%')";
+		} elseif($_REQUEST['search_area'] == 1) {
+			$where[] = "title like '%{$search_field}%'";
+		} elseif($_REQUEST['search_area'] == 2) {
+			$where[] = "short_story like '%{$search_field}%'";
+		} elseif($_REQUEST['search_area'] == 3) {
+			$where[] = "full_story like '%{$search_field}%'";
+		} elseif($_REQUEST['search_area'] == 4) {
+			$where[] = "xfields like '%{$search_field}%'";
+		} elseif($_REQUEST['search_area'] == 5) {
+			$where[] = "tags like '%{$search_field}%'";
+		}]]></searchcode>
+			<replacecode><![CDATA[		switch ((int)$_REQUEST['search_method']) {
+			case 1:  $search_mask = '{field} NOT LIKE "%{query}%"'; break;
+			case 2:  $search_mask = '{field} = "{query}"'; break;
+			case 3:  $search_mask = '{field} LIKE "{query}%"'; break;
+			case 4:  $search_mask = '{field} NOT LIKE "{query}%"'; break;
+			case 5:  $search_mask = '{field} LIKE "%{query}"'; break;
+			case 6:  $search_mask = '{field} NOT LIKE "%{query}"'; break;
+			default: $search_mask = '{field} LIKE "%{query}%"';
+		}
+
+		$search_areas = [
+			null,
+			'title',
+			'short_story',
+			'full_story',
+			'xfields',
+			'tags',
+		];
+		$search_area = $search_areas[(int)$_REQUEST['search_area']];
+		if (isset($search_area)) {
+			$where[] = strtr($search_mask, [
+				'{field}' => $search_area,
+				'{query}' => $search_field,
+			]);
+		} else {
+			$where_or = [];
+			foreach ($search_areas as $area) {
+				if ($area) {
+					$where_or[] = strtr($search_mask, [
+						'{field}' => $area,
+						'{query}' => $search_field,
+					]);
+				}
+			}
+			$where[] = '(' . join(' OR ', $where_or) . ')';
+		}]]></replacecode>
+			<enabled>1</enabled>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$search_area = array('', '', '', '', '', '');]]></searchcode>
+			<replacecode><![CDATA[$search_method = [(int)$_REQUEST['search_method'] => 'selected'];]]></replacecode>
+			<enabled>1</enabled>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[<input name="search_field" value="{$search_field}" type="text" class="form-control">]]></searchcode>
+			<replacecode><![CDATA[					<span class="input-group-btn">
+						<select name="search_method" class="uniform form-control">
+							<option value="0" {$search_method[0]}>Содержит</option>
+							<option value="1" {$search_method[1]}>НЕ содержит</option>
+							<option value="2" {$search_method[2]}>Строго равно</option>
+							<option value="3" {$search_method[3]}>Начинается на</option>
+							<option value="4" {$search_method[4]}>Начинается НЕ на</option>
+							<option value="5" {$search_method[5]}>Заканчивается на</option>
+							<option value="6" {$search_method[6]}>Заканчивается НЕ на</option>
+						</select>
+					</span>]]></replacecode>
+			<enabled>1</enabled>
+		</operation>
+	</file>
+</dleplugin>
